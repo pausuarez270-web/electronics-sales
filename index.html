@@ -1,0 +1,646 @@
+import React, { useState, useRef } from "react";
+import {
+  Menu,
+  X,
+  ShoppingCart,
+  Heart,
+  Backpack,
+  Footprints,
+  Headphones,
+  Wallet,
+  Wind,
+  Watch,
+  Compass,
+  Shirt,
+  Glasses,
+  Repeat,
+  Coffee,
+  Package,
+  Flame,
+  Box,
+  ChevronLeft,
+  ChevronRight,
+  Plus,
+  Minus,
+} from "lucide-react";
+
+/* ---------- Tokens ---------- */
+const INK = "#1F2A24";
+const PAPER = "#F7F4EF";
+const CARD = "#FFFFFF";
+const MUTED = "#8B8578";
+const TEAL = "#2F6F5E";
+const OCHRE = "#D9A441";
+const RUST = "#B5502C";
+const SAGE = "#7C8B6F";
+const ROSE = "#B98F86";
+const RED = "#D7263D";
+
+const TILE_COLORS = [TEAL, OCHRE, RUST, SAGE, ROSE];
+
+/* ---------- Product data ---------- */
+const PRODUCTS = [
+  // Ofertas
+  { id: 1, section: "ofertas", name: "Mochila urbana Nórdica", price: 52000, originalPrice: 74000, discount: 30, icon: Backpack, tile: TEAL, description: "Mochila de lona resistente al agua con compartimento acolchado para notebook de hasta 15”. Cierres YKK y bolsillo lateral para termo." },
+  { id: 2, section: "ofertas", name: "Zapatillas running Aire", price: 41000, originalPrice: 74500, discount: 45, icon: Footprints, tile: OCHRE, description: "Entresuela de espuma liviana pensada para asfalto. Malla transpirable y suela con tracción multidireccional." },
+  { id: 3, section: "ofertas", name: "Auriculares inalámbricos Eco", price: 28000, originalPrice: 56000, discount: 50, icon: Headphones, tile: RUST, description: "Bluetooth 5.3, cancelación de ruido pasiva y 30 horas de batería con el estuche de carga incluido." },
+  { id: 4, section: "ofertas", name: "Billetera de cuero Trenzado", price: 19500, originalPrice: 26000, discount: 25, icon: Wallet, tile: SAGE, description: "Cuero vacuno curtido al tanino con trenzado artesanal. Ocho tarjeteros y compartimento para monedas." },
+  { id: 5, section: "ofertas", name: "Campera rompeviento Tundra", price: 45500, originalPrice: 70000, discount: 35, icon: Wind, tile: ROSE, description: "Tela cortaviento con costuras selladas y capucha desmontable. Se guarda en su propio bolsillo frontal." },
+  { id: 6, section: "ofertas", name: "Reloj digital Vector", price: 33000, originalPrice: 55000, discount: 40, icon: Watch, tile: TEAL, description: "Sumergible hasta 50 metros, cronómetro y luz nocturna. Malla de silicona antialérgica." },
+
+  // Tendencia
+  { id: 7, section: "tendencia", name: "Gorra técnica Sendero", price: 15800, icon: Compass, tile: RUST, description: "Gorra de seis paneles con tela repelente al agua y visera curva prearmada. Cierre trasero ajustable." },
+  { id: 8, section: "tendencia", name: "Buzo oversize Bruma", price: 34200, icon: Shirt, tile: SAGE, description: "Algodón frisado de 380 gramos con corte oversize. Puños y cintura acanalados para mayor abrigo." },
+  { id: 9, section: "tendencia", name: "Lentes de sol Horizonte", price: 26900, icon: Glasses, tile: OCHRE, description: "Marco de acetato liviano con protección UV400 y lentes polarizadas antirreflejo." },
+  { id: 10, section: "tendencia", name: "Cinturón reversible Dos Caras", price: 17400, icon: Repeat, tile: ROSE, description: "Un mismo cinturón, dos colores: girá la hebilla y cambiá de cuero negro a marrón en segundos." },
+  { id: 11, section: "tendencia", name: "Termo acero Andes", price: 21300, icon: Coffee, tile: TEAL, description: "Acero inoxidable de doble pared al vacío. Mantiene la temperatura hasta 12 horas, pico cebador incluido." },
+  { id: 12, section: "tendencia", name: "Riñonera urbana Cruce", price: 18700, icon: Package, tile: RUST, description: "Cruza el pecho o la cintura. Compartimento acolchado para celular y salida para auriculares." },
+
+  // Regalos para papá
+  { id: 13, section: "papa", name: "Set de mate Completo", price: 29900, icon: Coffee, tile: SAGE, description: "Mate de calabaza forrado en cuero, bombilla de alpaca y termo de un litro, todo en su bolso de transporte." },
+  { id: 14, section: "papa", name: "Kit de asado Parrillero", price: 38500, icon: Flame, tile: RUST, description: "Cuchillo, chaira, tenedor y pinzas con mango de madera de guayubira, presentados en estuche de lona." },
+  { id: 15, section: "papa", name: "Combo Clásico cuero", price: 31200, icon: Wallet, tile: OCHRE, description: "Billetera y cinturón a juego en cuero legítimo marrón, con caja de regalo lista para entregar." },
+  { id: 16, section: "papa", name: "Navaja multiuso Explorador", price: 22600, icon: Box, tile: TEAL, description: "Doce funciones en acero inoxidable: hoja, sacacorchos, destornilladores y más, con cuerpo de acero cepillado." },
+  { id: 17, section: "papa", name: "Camisa lino Relax", price: 36700, icon: Shirt, tile: ROSE, description: "Lino 100% transpirable de calce holgado, ideal para los mediodías de calor. Lavado a máquina sin problema." },
+  { id: 18, section: "papa", name: "Grill portátil Fogón", price: 47800, icon: Flame, tile: SAGE, description: "Parrilla plegable a carbón con patas plegables y bolso de traslado. Arma un asado en cualquier lado." },
+];
+
+const SECTIONS = [
+  { id: "ofertas", title: "Ofertas", subtitle: "Precios que bajan esta semana, mientras dure el stock." },
+  { id: "tendencia", title: "Tendencia", subtitle: "Lo que más se está llevando la gente por estos días." },
+  { id: "papa", title: "Regalos para papá", subtitle: "Ideas con onda para el papá que no pide nada." },
+];
+
+const formatPrice = (n) => `$${n.toLocaleString("es-AR")}`;
+
+/* ---------- Product photo (placeholder photography — swap seeds for real product shots) ---------- */
+function ProductPhoto({ seed, variant = 0, alt }) {
+  return (
+    <img
+      src={`https://picsum.photos/seed/${seed}-${variant}/600/600`}
+      alt={alt}
+      loading="lazy"
+      className="w-full h-full object-cover"
+    />
+  );
+}
+
+/* ---------- Product card ---------- */
+function ProductCard({ product, isFavorite, onToggleFavorite, onAddToCart, onOpen }) {
+  const Icon = product.icon;
+  return (
+    <div
+      onClick={() => onOpen(product)}
+      className="rounded-2xl overflow-hidden cursor-pointer border transition-shadow hover:shadow-lg"
+      style={{ backgroundColor: CARD, borderColor: "#E7E2D7" }}
+    >
+      <div className="relative aspect-square">
+        <ProductPhoto seed={`tito-${product.id}`} alt={product.name} />
+        {product.discount && (
+          <span
+            className="absolute top-3 left-3 px-2.5 py-1 rounded-full text-xs font-bold text-white"
+            style={{ backgroundColor: RED }}
+          >
+            -{product.discount}% OFF
+          </span>
+        )}
+      </div>
+      <div className="p-4">
+        <h3 className="text-sm font-medium leading-snug mb-1" style={{ color: INK }}>
+          {product.name}
+        </h3>
+        <div className="flex items-baseline gap-2 mb-3">
+          <span className="font-semibold" style={{ color: INK }}>
+            {formatPrice(product.price)}
+          </span>
+          {product.originalPrice && (
+            <span className="text-xs line-through" style={{ color: MUTED }}>
+              {formatPrice(product.originalPrice)}
+            </span>
+          )}
+        </div>
+        <div className="flex items-center justify-end gap-2">
+          <button
+            aria-label="Marcar como favorito"
+            onClick={(e) => {
+              e.stopPropagation();
+              onToggleFavorite(product.id);
+            }}
+            className="w-9 h-9 rounded-full flex items-center justify-center border transition-colors"
+            style={{ borderColor: "#E7E2D7" }}
+          >
+            <Heart
+              size={16}
+              style={{ color: isFavorite ? RUST : MUTED }}
+              fill={isFavorite ? RUST : "none"}
+            />
+          </button>
+          <button
+            aria-label="Agregar al carrito"
+            onClick={(e) => {
+              e.stopPropagation();
+              onAddToCart(product.id);
+            }}
+            className="w-9 h-9 rounded-full flex items-center justify-center text-white"
+            style={{ backgroundColor: INK }}
+          >
+            <ShoppingCart size={16} />
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ---------- Product carousel ---------- */
+function ProductCarousel({ products, favorites, onToggleFavorite, onAddToCart, onOpen }) {
+  const trackRef = useRef(null);
+
+  const scrollByCards = (dir) => {
+    if (!trackRef.current) return;
+    trackRef.current.scrollBy({ left: dir * 260, behavior: "smooth" });
+  };
+
+  return (
+    <div className="relative">
+      <div
+        ref={trackRef}
+        className="no-scrollbar flex gap-5 overflow-x-auto snap-x snap-mandatory pb-2 -mx-4 px-4 sm:-mx-8 sm:px-8"
+      >
+        {products.map((product) => (
+          <div key={product.id} className="snap-start shrink-0 w-48 sm:w-56">
+            <ProductCard
+              product={product}
+              isFavorite={favorites.has(product.id)}
+              onToggleFavorite={onToggleFavorite}
+              onAddToCart={onAddToCart}
+              onOpen={onOpen}
+            />
+          </div>
+        ))}
+      </div>
+
+      <button
+        onClick={() => scrollByCards(-1)}
+        aria-label="Ver anteriores"
+        className="hidden sm:flex absolute -left-4 top-[38%] -translate-y-1/2 w-9 h-9 rounded-full items-center justify-center"
+        style={{ backgroundColor: CARD, border: "1px solid #E7E2D7" }}
+      >
+        <ChevronLeft size={18} style={{ color: INK }} />
+      </button>
+      <button
+        onClick={() => scrollByCards(1)}
+        aria-label="Ver siguientes"
+        className="hidden sm:flex absolute -right-4 top-[38%] -translate-y-1/2 w-9 h-9 rounded-full items-center justify-center"
+        style={{ backgroundColor: CARD, border: "1px solid #E7E2D7" }}
+      >
+        <ChevronRight size={18} style={{ color: INK }} />
+      </button>
+    </div>
+  );
+}
+
+/* ---------- Product detail modal ---------- */
+function ProductModal({ product, isFavorite, onToggleFavorite, onAddToCart, onClose }) {
+  const [activeShot, setActiveShot] = useState(0);
+  if (!product) return null;
+  const Icon = product.icon;
+  const rotations = [0, -14, 14, 26];
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      onClick={onClose}
+    >
+      <div className="absolute inset-0" style={{ backgroundColor: "rgba(31,42,36,0.5)" }} />
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className="relative w-full max-w-4xl max-h-[90vh] overflow-y-auto rounded-2xl grid grid-cols-1 md:grid-cols-2"
+        style={{ backgroundColor: CARD }}
+      >
+        <button
+          onClick={onClose}
+          aria-label="Cerrar"
+          className="absolute top-4 right-4 z-10 w-9 h-9 rounded-full flex items-center justify-center"
+          style={{ backgroundColor: PAPER, color: INK }}
+        >
+          <X size={18} />
+        </button>
+
+        {/* Gallery */}
+        <div className="p-6 md:p-8">
+          <div className="rounded-2xl overflow-hidden aspect-square mb-4">
+            <ProductPhoto seed={`tito-${product.id}`} variant={activeShot} alt={product.name} />
+          </div>
+          <div className="grid grid-cols-4 gap-3">
+            {rotations.map((r, i) => (
+              <button
+                key={i}
+                onClick={() => setActiveShot(i)}
+                className="rounded-xl overflow-hidden aspect-square border-2 transition-colors"
+                style={{ borderColor: activeShot === i ? INK : "#E7E2D7" }}
+              >
+                <ProductPhoto seed={`tito-${product.id}`} variant={i} alt={`${product.name} — foto ${i + 1}`} />
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Info */}
+        <div className="p-6 md:p-8 md:pr-10 flex flex-col">
+          <span className="text-xs uppercase tracking-wide mb-2" style={{ color: MUTED }}>
+            {SECTIONS.find((s) => s.id === product.section)?.title}
+          </span>
+          <h2
+            className="text-2xl md:text-3xl mb-3 leading-tight"
+            style={{ color: INK, fontFamily: "'Fraunces', serif" }}
+          >
+            {product.name}
+          </h2>
+          <div className="flex items-baseline gap-3 mb-5">
+            <span className="text-2xl font-semibold" style={{ color: INK }}>
+              {formatPrice(product.price)}
+            </span>
+            {product.originalPrice && (
+              <span className="text-sm line-through" style={{ color: MUTED }}>
+                {formatPrice(product.originalPrice)}
+              </span>
+            )}
+            {product.discount && (
+              <span className="text-sm font-medium" style={{ color: RUST }}>
+                -{product.discount}%
+              </span>
+            )}
+          </div>
+          <p className="text-sm leading-relaxed mb-8" style={{ color: "#4A5049" }}>
+            {product.description}
+          </p>
+
+          <div className="mt-auto flex flex-col sm:flex-row gap-3">
+            <button
+              onClick={() => onAddToCart(product.id)}
+              className="flex-1 rounded-full py-3 px-6 text-white font-medium flex items-center justify-center gap-2"
+              style={{ backgroundColor: INK }}
+            >
+              <ShoppingCart size={18} />
+              Agregar al carrito
+            </button>
+            <button
+              onClick={() => onToggleFavorite(product.id)}
+              className="rounded-full py-3 px-6 font-medium flex items-center justify-center gap-2 border"
+              style={{ borderColor: "#E7E2D7", color: isFavorite ? RUST : INK }}
+            >
+              <Heart size={18} fill={isFavorite ? RUST : "none"} />
+              {isFavorite ? "En favoritos" : "Favorito"}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ---------- Cart / favorites side panel ---------- */
+function SidePanel({ view, onClose, cartItems, cartTotal, favoriteProducts, onIncrement, onDecrement, onToggleFavorite, onAddToCart }) {
+  const open = view !== null;
+  const title = view === "favorites" ? "Mis favoritos" : "Tu carrito";
+
+  return (
+    <div className={`fixed inset-0 z-50 ${open ? "" : "pointer-events-none"}`} aria-hidden={!open}>
+      <div
+        onClick={onClose}
+        className="absolute inset-0 transition-opacity duration-300"
+        style={{ backgroundColor: "rgba(31,42,36,0.5)", opacity: open ? 1 : 0 }}
+      />
+      <div
+        className={`absolute top-0 right-0 h-full w-80 max-w-[88vw] flex flex-col transition-transform duration-300 ${
+          open ? "translate-x-0" : "translate-x-full"
+        }`}
+        style={{ backgroundColor: CARD }}
+      >
+        <div className="p-6 flex items-center justify-between border-b" style={{ borderColor: "#E7E2D7" }}>
+          <span className="text-lg font-medium" style={{ color: INK }}>
+            {title}
+          </span>
+          <button onClick={onClose} aria-label="Cerrar">
+            <X size={20} style={{ color: INK }} />
+          </button>
+        </div>
+
+        <div className="flex-1 overflow-y-auto p-6 flex flex-col gap-5">
+          {view === "favorites" ? (
+            favoriteProducts.length === 0 ? (
+              <p className="text-sm" style={{ color: MUTED }}>
+                Todavía no marcaste ningún favorito. Tocá el corazón en un producto para guardarlo acá.
+              </p>
+            ) : (
+              favoriteProducts.map((product) => (
+                <div key={product.id} className="flex gap-3">
+                  <div className="w-16 h-16 rounded-xl overflow-hidden shrink-0">
+                    <ProductPhoto seed={`tito-${product.id}`} alt={product.name} />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium truncate" style={{ color: INK }}>
+                      {product.name}
+                    </p>
+                    <p className="text-sm mb-2" style={{ color: MUTED }}>
+                      {formatPrice(product.price)}
+                    </p>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => onAddToCart(product.id)}
+                        className="text-xs px-3 py-1.5 rounded-full text-white font-medium"
+                        style={{ backgroundColor: INK }}
+                      >
+                        Agregar al carrito
+                      </button>
+                      <button
+                        onClick={() => onToggleFavorite(product.id)}
+                        aria-label="Quitar de favoritos"
+                        className="w-7 h-7 rounded-full border flex items-center justify-center shrink-0"
+                        style={{ borderColor: "#E7E2D7" }}
+                      >
+                        <Heart size={14} style={{ color: RUST }} fill={RUST} />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))
+            )
+          ) : cartItems.length === 0 ? (
+            <p className="text-sm" style={{ color: MUTED }}>
+              Tu carrito está vacío. Elegí algo lindo para empezar.
+            </p>
+          ) : (
+            cartItems.map((item) => (
+              <div key={item.id} className="flex gap-3">
+                <div className="w-16 h-16 rounded-xl overflow-hidden shrink-0">
+                  <ProductPhoto seed={`tito-${item.id}`} alt={item.name} />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium truncate" style={{ color: INK }}>
+                    {item.name}
+                  </p>
+                  <p className="text-sm mb-2" style={{ color: MUTED }}>
+                    {formatPrice(item.price)}
+                  </p>
+                  <div className="flex items-center gap-3">
+                    <button
+                      onClick={() => onDecrement(item.id)}
+                      aria-label="Restar unidad"
+                      className="w-7 h-7 rounded-full border flex items-center justify-center"
+                      style={{ borderColor: "#E7E2D7" }}
+                    >
+                      <Minus size={14} style={{ color: INK }} />
+                    </button>
+                    <span className="text-sm w-4 text-center" style={{ color: INK }}>
+                      {item.qty}
+                    </span>
+                    <button
+                      onClick={() => onIncrement(item.id)}
+                      aria-label="Sumar unidad"
+                      className="w-7 h-7 rounded-full border flex items-center justify-center"
+                      style={{ borderColor: "#E7E2D7" }}
+                    >
+                      <Plus size={14} style={{ color: INK }} />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+
+        {view === "cart" && cartItems.length > 0 && (
+          <div className="p-6 border-t" style={{ borderColor: "#E7E2D7" }}>
+            <div className="flex items-center justify-between mb-4">
+              <span className="text-sm" style={{ color: MUTED }}>
+                Total
+              </span>
+              <span className="text-lg font-semibold" style={{ color: INK }}>
+                {formatPrice(cartTotal)}
+              </span>
+            </div>
+            <button className="w-full rounded-full py-3 text-white font-medium" style={{ backgroundColor: INK }}>
+              Finalizar compra
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/* ---------- Side drawer ---------- */
+function Drawer({ open, onClose, onOpenFavorites }) {
+  const goTo = (id) => {
+    onClose();
+    setTimeout(() => {
+      document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 200);
+  };
+  return (
+    <div
+      className={`fixed inset-0 z-50 ${open ? "" : "pointer-events-none"}`}
+      aria-hidden={!open}
+    >
+      <div
+        onClick={onClose}
+        className="absolute inset-0 transition-opacity duration-300"
+        style={{ backgroundColor: "rgba(31,42,36,0.5)", opacity: open ? 1 : 0 }}
+      />
+      <div
+        className={`absolute top-0 left-0 h-full w-72 transition-transform duration-300 ${
+          open ? "translate-x-0" : "-translate-x-full"
+        }`}
+        style={{ backgroundColor: CARD }}
+      >
+        <div className="p-6 flex items-center justify-between border-b" style={{ borderColor: "#E7E2D7" }}>
+          <span style={{ fontFamily: "'Fraunces', serif" }} className="text-xl" >
+            Lo de Tito
+          </span>
+          <button onClick={onClose} aria-label="Cerrar menú">
+            <X size={20} style={{ color: INK }} />
+          </button>
+        </div>
+        <nav className="p-6 flex flex-col gap-1">
+          {SECTIONS.map((s) => (
+            <button
+              key={s.id}
+              onClick={() => goTo(s.id)}
+              className="text-left py-3 text-base border-b"
+              style={{ color: INK, borderColor: "#F0EDE4" }}
+            >
+              {s.title}
+            </button>
+          ))}
+          <button
+            onClick={onOpenFavorites}
+            className="text-left py-3 text-base border-b flex items-center gap-2"
+            style={{ color: INK, borderColor: "#F0EDE4" }}
+          >
+            <Heart size={16} style={{ color: RUST }} />
+            Mis favoritos
+          </button>
+          <button
+            onClick={onClose}
+            className="text-left py-3 text-base"
+            style={{ color: INK }}
+          >
+            Contacto
+          </button>
+        </nav>
+        <div className="px-6 py-4 text-xs" style={{ color: MUTED }}>
+          Envíos a todo el país. Cambios sin cargo dentro de los 30 días.
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ---------- App ---------- */
+export default function AlmacenStore() {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [selected, setSelected] = useState(null);
+  const [panelView, setPanelView] = useState(null); // null | "cart" | "favorites"
+  const [cart, setCart] = useState({});
+  const [favorites, setFavorites] = useState(new Set());
+
+  const cartCount = Object.values(cart).reduce((a, b) => a + b, 0);
+
+  const addToCart = (id) => {
+    setCart((prev) => ({ ...prev, [id]: (prev[id] || 0) + 1 }));
+  };
+
+  const decrementCart = (id) => {
+    setCart((prev) => {
+      const next = { ...prev };
+      if (!next[id]) return prev;
+      if (next[id] <= 1) {
+        delete next[id];
+      } else {
+        next[id] -= 1;
+      }
+      return next;
+    });
+  };
+
+  const toggleFavorite = (id) => {
+    setFavorites((prev) => {
+      const next = new Set(prev);
+      next.has(id) ? next.delete(id) : next.add(id);
+      return next;
+    });
+  };
+
+  const cartItems = Object.entries(cart)
+    .map(([id, qty]) => ({ ...PRODUCTS.find((p) => p.id === Number(id)), qty }))
+    .filter((item) => item.id);
+  const cartTotal = cartItems.reduce((sum, item) => sum + item.price * item.qty, 0);
+  const favoriteProducts = PRODUCTS.filter((p) => favorites.has(p.id));
+
+  return (
+    <div style={{ backgroundColor: PAPER, minHeight: "100%", fontFamily: "'Inter', sans-serif", color: INK }}>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;1,500&family=Inter:wght@400;500;600&display=swap');
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      `}</style>
+
+      {/* Header */}
+      <header
+        className="sticky top-0 z-40 flex items-center justify-between px-4 sm:px-8 py-4 border-b"
+        style={{ backgroundColor: "rgba(247,244,239,0.92)", backdropFilter: "blur(6px)", borderColor: "#E7E2D7" }}
+      >
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => setMenuOpen(true)}
+            aria-label="Abrir menú"
+            className="w-10 h-10 flex items-center justify-center rounded-full"
+          >
+            <Menu size={22} style={{ color: INK }} />
+          </button>
+          <span className="text-xl sm:text-2xl" style={{ fontFamily: "'Fraunces', serif" }}>
+            Lo de Tito
+          </span>
+        </div>
+        <button
+          onClick={() => setPanelView("cart")}
+          aria-label="Ver carrito"
+          className="relative w-10 h-10 flex items-center justify-center rounded-full"
+        >
+          <ShoppingCart size={22} style={{ color: INK }} />
+          {cartCount > 0 && (
+            <span
+              className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] px-1 rounded-full text-[11px] font-semibold text-white flex items-center justify-center"
+              style={{ backgroundColor: RUST }}
+            >
+              {cartCount}
+            </span>
+          )}
+        </button>
+      </header>
+
+      {/* Tagline */}
+      <div className="px-4 sm:px-8 pt-10 pb-4 max-w-3xl">
+        <p className="text-2xl sm:text-3xl" style={{ fontFamily: "'Fraunces', serif", fontStyle: "italic", color: INK }}>
+          Cosas buenas, cerca de casa.
+        </p>
+        <p className="text-sm mt-2" style={{ color: MUTED }}>
+          Una selección chica, pensada de a poco — no un catálogo infinito.
+        </p>
+      </div>
+
+      {/* Sections */}
+      <main className="px-4 sm:px-8 pb-24">
+        {SECTIONS.map((section) => (
+          <section id={section.id} key={section.id} className="pt-14 scroll-mt-20">
+            <div className="flex items-baseline justify-between mb-6">
+              <div>
+                <h2 className="text-xl sm:text-2xl font-semibold" style={{ color: INK }}>
+                  {section.title}
+                </h2>
+                <p className="text-sm mt-1" style={{ color: MUTED }}>
+                  {section.subtitle}
+                </p>
+              </div>
+            </div>
+            <ProductCarousel
+              products={PRODUCTS.filter((p) => p.section === section.id)}
+              favorites={favorites}
+              onToggleFavorite={toggleFavorite}
+              onAddToCart={addToCart}
+              onOpen={setSelected}
+            />
+          </section>
+        ))}
+      </main>
+
+      <footer className="px-4 sm:px-8 py-8 border-t text-xs" style={{ borderColor: "#E7E2D7", color: MUTED }}>
+        Lo de Tito — envíos a todo el país. Cambios sin cargo dentro de los 30 días.
+      </footer>
+
+      <Drawer open={menuOpen} onClose={() => setMenuOpen(false)} onOpenFavorites={() => { setMenuOpen(false); setPanelView("favorites"); }} />
+
+      <SidePanel
+        view={panelView}
+        onClose={() => setPanelView(null)}
+        cartItems={cartItems}
+        cartTotal={cartTotal}
+        favoriteProducts={favoriteProducts}
+        onIncrement={addToCart}
+        onDecrement={decrementCart}
+        onToggleFavorite={toggleFavorite}
+        onAddToCart={addToCart}
+      />
+
+      <ProductModal
+        product={selected}
+        isFavorite={selected ? favorites.has(selected.id) : false}
+        onToggleFavorite={toggleFavorite}
+        onAddToCart={addToCart}
+        onClose={() => setSelected(null)}
+      />
+    </div>
+  );
+}
