@@ -12,7 +12,7 @@ const PRODUCTS = [
 ];
 
 // --- Formato de moneda ---
-const formatPrice = (n) => $${n.toLocaleString("es-AR")};
+const formatPrice = (n) => { return n.toLocaleString("es-AR"); };
 
 // --- Renderizar productos en sus contenedores ---
 function renderProducts() {
@@ -20,7 +20,7 @@ function renderProducts() {
     const secciones = ["ofertas", "tendencia", "papa"];
 
     secciones.forEach((seccionId) => {
-        const contenedor = document.getElementById(container-${seccionId});
+        const contenedor = document.getElementById(container-$seccionId);
         if (!contenedor) return;
 
         // Filtramos los productos de esta sección
