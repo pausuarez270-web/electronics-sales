@@ -445,3 +445,8 @@ document.addEventListener("DOMContentLoaded", () => {
     else closeDrawer();
   });
 });
+// Arrancar la aplicación al cargar la página
+document.addEventListener("DOMContentLoaded", () => {
+    renderSections();
+    updateCartBadge();
+});
