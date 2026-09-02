@@ -12,36 +12,33 @@ const PRODUCTS = [
 ];
 
 // --- Formato de moneda ---
-const formatPrice = (n) => { return n.toLocaleString("es-AR"); };
+const formatPrice = (n) => $${n.toLocaleString("es-AR")};
 
 // --- Renderizar productos en sus contenedores ---
 function renderProducts() {
-    // Buscamos las secciones en el HTML
     const secciones = ["ofertas", "tendencia", "papa"];
 
     secciones.forEach((seccionId) => {
-        const contenedor = document.getElementById(`container-${seccionId}`);
+        const contenedor = document.getElementById(container-${seccionId});
         if (!contenedor) return;
 
-        // Filtramos los productos de esta sección
         const prods = PRODUCTS.filter(p => p.section === seccionId);
 
-        // Generamos el HTML de las tarjetas con Tailwind
         contenedor.innerHTML = prods.map(p => `
-            <div class="bg-cardbg rounded-2xl p-4 shadow-md border border-gray-100 flex flex-col justify-between hover:shadow-lg transition-shadow">
+            <div class="bg-white rounded-2xl p-4 shadow-md border border-gray-100 flex flex-col justify-between hover:shadow-lg transition-shadow">
                 <div>
                     <div class="relative bg-gray-100 rounded-xl overflow-hidden mb-3 aspect-square flex items-center justify-center">
-                        <span class="text-xs font-bold text-muted uppercase">Tecnologics</span>
-                        ${p.discount ? <span class="absolute top-2 left-2 bg-reddis text-white text-xs px-2 py-0.5 rounded-full font-bold">-${p.discount}%</span> : ""}
+                        <span class="text-xs font-bold text-gray-400 uppercase">Tecnologics</span>
+                        ${p.discount ? <span class="absolute top-2 left-2 bg-red-500 text-white text-xs px-2 py-0.5 rounded-full font-bold">-${p.discount}%</span> : ""}
                     </div>
-                    <h3 class="font-bold text-ink text-base mb-1">${p.name}</h3>
+                    <h3 class="font-bold text-gray-900 text-base mb-1">${p.name}</h3>
                 </div>
                 <div>
                     <div class="flex items-baseline gap-2 mb-3">
-                        <span class="text-lg font-bold text-teal">${formatPrice(p.price)}</span>
-                        ${p.originalPrice ? <span class="text-xs text-muted line-through">${formatPrice(p.originalPrice)}</span> : ""}
+                        <span class="text-lg font-bold text-teal-600">${formatPrice(p.price)}</span>
+                        ${p.originalPrice ? <span class="text-xs text-gray-400 line-through">${formatPrice(p.originalPrice)}</span> : ""}
                     </div>
-                    <button onclick="alert('Producto agregado al carrito')" class="w-full bg-ink text-white py-2 rounded-xl text-sm font-medium hover:bg-teal transition-colors">
+                    <button onclick="alert('¡Producto agregado al carrito!')" class="w-full bg-gray-900 text-white py-2 rounded-xl text-sm font-medium hover:bg-teal-600 transition-colors">
                         Agregar al carrito
                     </button>
                 </div>
