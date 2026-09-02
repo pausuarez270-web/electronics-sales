@@ -20,7 +20,7 @@ function renderProducts() {
     const secciones = ["ofertas", "tendencia", "papa"];
 
     secciones.forEach((seccionId) => {
-        const contenedor = document.getElementById(container-$seccionId);
+        const contenedor = document.getElementById(`container-$seccionId);
         if (!contenedor) return;
 
         // Filtramos los productos de esta sección
