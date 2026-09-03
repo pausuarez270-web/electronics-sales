@@ -1,37 +1,16 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tecnologics Sale</title>
     
     <!-- Tailwind CSS por CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        ink: "#1F2A24",
-                        paper: "#F7F4EF",
-                        cardbg: "#FFFFFF",
-                        muted: "#888578",
-                        teal: "#2F6F5E",
-                        ochre: "#D9A441",
-                        rust: "#B5502C",
-                        sage: "#7C8B6F",
-                        rose: "#B98F86",
-                        reddis: "#D7263D",
-                    },
-                    fontFamily: {
-                        display: ["Fraunces", "serif"],
-                        sans: ["Inter", "sans-serif"],
-                    },
-                },
-            },
-        };
-    </script>
-
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Faustina:wght@400;600;700&display=swap" rel="stylesheet">
+    
     <!-- Enlace a tu archivo CSS personalizado -->
     <link rel="stylesheet" href="styles.css" />
 </head>
@@ -47,42 +26,35 @@
             </nav>
         </div>
     </header>
-<main class="max-w-7xl mx-auto px-4 sm:px-8 pb-24 pt-14">
-    <!-- Sección Ofertas -->
-    <section id="ofertas" class="mb-12">
-        <h2 class="text-2xl font-display font-semibold mb-2">Ofertas Destacadas</h2>
-        <p class="text-text-muted mb-6">Los mejores precios en tecnología por tiempo limitado.</p>
-        <div id="container-ofertas" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6"></div>
-    </section>
 
-    <!-- Sección Tendencia -->
-    <section id="tendencia" class="mb-12">
-        <h2 class="text-2xl font-display font-semibold mb-2">Tendencias</h2>
-        <p class="text-text-muted mb-6">Lo más elegido de la temporada.</p>
-        <div id="container-tendencia" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6"></div>
-    </section>
-<<<<<<< HEAD
+    <!-- Contenedor principal donde actuará React -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-8 pb-24 pt-14">
+        
+        <!-- Aquí se montará tu app de React -->
+        <div id="root"></div>
 
-    <!-- Sección Regalos para papá -->
-    <section id="papa" class="mb-12">
-        <h2 class="text-2xl font-display font-semibold mb-2">Regalos para Papá</h2>
-        <p class="text-text-muted mb-6">Ideas especiales para sorprenderlo.</p>
-        <div id="container-papa" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6"></div>
-    </section>
-</main>
-   
+        <!-- Sección Tendencia (Estática de respaldo o contenedor de secciones) -->
+        <section id="tendencia" class="mb-12">
+            <h2 class="text-2xl font-display font-semibold mb-2">Tendencias</h2>
+            <p class="text-text-muted mb-6">Lo más elegido de la temporada.</p>
+            <div id="container-tendencia" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6"></div>
+        </section>
+
+        <!-- Sección Regalos para papá -->
+        <section id="papa" class="mb-12">
+            <h2 class="text-2xl font-display font-semibold mb-2">Regalos para Papá</h2>
+            <p class="text-text-muted mb-6">Ideas especiales para sorprender.</p>
+            <div id="container-papa" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6"></div>
+        </section>
+
     </main>
-=======
->>>>>>> e6065a8bbd38b1ae9e0d71106b6f76340e714b34
 
-    <!-- Sección Regalos para papá -->
-    <section id="papa" class="mb-12">
-        <h2 class="text-2xl font-display font-semibold mb-2">Regalos para Papá</h2>
-        <p class="text-text-muted mb-6">Ideas especiales para sorprenderlo.</p>
-        <div id="container-papa" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6"></div>
-    </section>
-</main>
- 
+    <!-- React, ReactDOM, Lucide Icons y Babel -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
     <!-- Enlace a tu archivo JavaScript principal -->
     <script src="main.js"></script>
 </body>
