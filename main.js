@@ -1,6 +1,11 @@
 // Definición segura de iconos para CDN
 const Icon = ({ name, size = 24, color = "currentColor", ...props }) => {
-    const LucideIcon = window.lucide && window.lucide.icons ? window.lucide.icons[name] : null;
+    // Nos aseguramos de que el nombre sea un string válido
+    const iconName = typeof name === 'string' ? name : 'Package';
+    
+    // Buscamos el icono de forma segura en window.lucide
+    const LucideIcon = window.lucide && window.lucide[iconName] ? window.lucide[iconName] : window.lucide['Package'];
+    
     if (!LucideIcon) return null;
     return React.createElement(LucideIcon, { size, color, ...props });
 };
@@ -65,7 +70,7 @@ function ProductCard({ product, isFavorite, onToggleFavorite, addToCart, onOpen 
       onClick={() => onOpen(product)}
       className="bg-white rounded-2xl overflow-hidden cursor-pointer border border-[#E7E207]/30 transition-shadow hover:shadow-lg flex flex-col justify-between"
     >
-      <div className="relative aspect-square bg-[#E6E0D5]/30 flex items-center justify-center">
+     <div className="relative aspect-square bg-[#E6E0D5]/30 flex items-center justify-center">
                 {product.icon && (
                     <Icon name={product.icon} size={48} />
                 )}
@@ -75,13 +80,7 @@ function ProductCard({ product, isFavorite, onToggleFavorite, addToCart, onOpen 
                         -{product.discount}% OFF
                     </span>
                 )}
-            -{product.discount}% OFF
-    <Icon name={product.icon} size={48} />
-    
-          <span className="absolute top-3 left-3 px-2.5 py-1 rounded-full text-xs font-bold text-white" style={{ backgroundColor: RED }}>
-            -{product.discount}% OFF
-          </span>
-      </div>
+            </div>
       <div className="p-4">
         <h3 className="text-sm font-medium leading-snug mb-1 text-[#1F2A24] truncate">{product.name}</h3>
         <div className="flex items-baseline gap-2 mb-2">
