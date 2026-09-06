@@ -1,3 +1,9 @@
+// Definición segura de iconos para CDN
+const Icon = ({ name, size = 24, color = "currentColor", ...props }) => {
+    const LucideIcon = window.lucide && window.lucide.icons ? window.lucide.icons[name] : null;
+    if (!LucideIcon) return null;
+    return React.createElement(LucideIcon, { size, color, ...props });
+};
 const { useState, useRef } = React;
 const { 
   Menu, X, ShoppingCart, Heart, Backpack, Footprints, Headphones, 
@@ -59,15 +65,22 @@ function ProductCard({ product, isFavorite, onToggleFavorite, addToCart, onOpen 
       onClick={() => onOpen(product)}
       className="bg-white rounded-2xl overflow-hidden cursor-pointer border border-[#E7E207]/30 transition-shadow hover:shadow-lg flex flex-col justify-between"
     >
-      <div className="relative aspect-square bg-gray-100">
-        <div className="w-full h-full flex items-center justify-center" style={{ backgroundColor: product.tile }}>
-          {React.createElement(product.icon, { size: 48, color: "#FFFFFF", strokeWidth: 1.5 })}
-        </div>
-        {product.discount && (
+      <div className="relative aspect-square bg-[#E6E0D5]/30 flex items-center justify-center">
+                {product.icon && (
+                    <Icon name={product.icon} size={48} />
+                )}
+                
+                {product.discount && (
+                    <span className="absolute top-3 left-3 px-2.5 py-1 rounded-full text-xs font-semibold bg-[#B5502C] text-white">
+                        -{product.discount}% OFF
+                    </span>
+                )}
+            -{product.discount}% OFF
+    <Icon name={product.icon} size={48} />
+    
           <span className="absolute top-3 left-3 px-2.5 py-1 rounded-full text-xs font-bold text-white" style={{ backgroundColor: RED }}>
             -{product.discount}% OFF
           </span>
-        )}
       </div>
       <div className="p-4">
         <h3 className="text-sm font-medium leading-snug mb-1 text-[#1F2A24] truncate">{product.name}</h3>
@@ -82,13 +95,13 @@ function ProductCard({ product, isFavorite, onToggleFavorite, addToCart, onOpen 
             onClick={(e) => { e.stopPropagation(); onToggleFavorite(product.id); }}
             className="w-9 h-9 rounded-full flex items-center justify-center border border-[#E7E207]/50 bg-white"
           >
-            <Heart size={16} color={isFavorite ? RUST : MUTED} fill={isFavorite ? RUST : "none"} />
+            <Icon name="heart" size={16} color={isFavorite ? RUST : MUTED} fill={isFavorite ? RUST : "none"} />
           </button>
           <button 
             onClick={(e) => { e.stopPropagation(); addToCart(product.id); }}
             className="w-9 h-9 rounded-full flex items-center justify-center text-white bg-[#1F2A24]"
           >
-            <ShoppingCart size={16} />
+            <Icon name="shopping-cart" size={16} />
           </button>
         </div>
       </div>
@@ -126,13 +139,13 @@ function ProductCarousel({ products, favorites, onToggleFavorite, addToCart, onO
         onClick={() => scrollByCards(-1)}
         className="hidden sm:flex absolute -left-4 top-[38%] -translate-y-1/2 w-9 h-9 rounded-full items-center justify-center bg-white border border-[#E7E207] shadow-md z-10"
       >
-        <ChevronLeft size={18} color={INK} />
+        <Icon name="chevron-left" size={18} color={INK} />
       </button>
       <button 
         onClick={() => scrollByCards(1)}
         className="hidden sm:flex absolute -right-4 top-[38%] -translate-y-1/2 w-9 h-9 rounded-full items-center justify-center bg-white border border-[#E7E207] shadow-md z-10"
       >
-        <ChevronRight size={18} color={INK} />
+        <Icon name="chevron-right" size={18} color={INK} />
       </button>
     </div>
   );
@@ -148,7 +161,7 @@ function ProductModal({ product, isFavorite, onToggleFavorite, addToCart, onClos
         onClick={(e) => e.stopPropagation()}
       >
         <button onClick={onClose} className="absolute top-4 right-4 z-10 w-9 h-9 rounded-full bg-white/80 flex items-center justify-center shadow">
-          <X size={18} />
+          <Icon name="x" size={18} />
         </button>
         <div className="w-full md:w-1/2 aspect-square flex items-center justify-center" style={{ backgroundColor: product.tile }}>
           {React.createElement(product.icon, { size: 80, color: "#FFFFFF", strokeWidth: 1.5 })}
@@ -174,13 +187,13 @@ function ProductModal({ product, isFavorite, onToggleFavorite, addToCart, onClos
               onClick={() => addToCart(product.id)}
               className="flex-1 rounded-full py-3 bg-[#1F2A24] text-white font-medium flex items-center justify-center gap-2"
             >
-              <ShoppingCart size={18} /> Agregar al carrito
+              <Icon name="shopping-cart" size={18} /> Agregar al carrito
             </button>
             <button 
               onClick={() => onToggleFavorite(product.id)}
               className="w-12 h-12 rounded-full border border-gray-300 flex items-center justify-center"
             >
-              <Heart size={20} color={isFavorite ? RUST : INK} fill={isFavorite ? RUST : "none"} />
+              <Icon name="heart" size={20} color={isFavorite ? RUST : INK} fill={isFavorite ? RUST : "none"} />
             </button>
           </div>
         </div>
@@ -190,88 +203,89 @@ function ProductModal({ product, isFavorite, onToggleFavorite, addToCart, onClos
 }
 
 // App Principal
+const toggleFavorite = (productId) => {
+        setFavorites(prev => {
+            const newFavs = new Set(prev);
+            if (newFavs.has(productId)) {
+                newFavs.delete(productId);
+            } else {
+                newFavs.add(productId);
+            }
+            return newFavs;
+        });
+    };
+
+    const addToCart = (product) => {
+        setCart(prev => ({
+            ...prev,
+            [product.id]: (prev[product.id] || 0) + 1
+        }));
+    };
 function App() {
-  const [favorites, setFavorites] = useState(new Set());
-  const [cart, setCart] = useState({});
-  const [activeModalProduct, setActiveModalProduct] = useState(null);
+    const [menuOpen, setMenuOpen] = React.useState(false);
+    const [favorites, setFavorites] = React.useState(new Set());
+    const [cart, setCart] = React.useState({});
+    const [activeModalProduct, setActiveModalProduct] = React.useState(null);
+    const [activeTab, setActiveTab] = React.useState('home');
 
-  const toggleFavorite = (id) => {
-    const newFavs = new Set(favorites);
-    if (newFavs.has(id)) newFavs.delete(id);
-    else newFavs.add(id);
-    setFavorites(newFavs);
-  };
+    const totalCartItems = Object.values(cart).reduce((a, b) => a + b, 0);
 
-  const addToCart = (id) => {
-    setCart(prev => ({ ...prev, [id]: (prev[id] || 0) + 1 }));
-  };
+    return (
+        <div className="min-h-screen pb-20 bg-[#F7F4EF] text-[#1F2A24]">
+            {/* HEADER PRINCIPAL */}
+            <header className="sticky top-0 bg-[#F7F4EF]/90 backdrop-blur z-30 px-6 py-4 flex items-center justify-between border-b border-[#E6E0D5]">
+                <div className="flex items-center gap-3">
+                    <button onClick={() => setMenuOpen(!menuOpen)} className="p-2">
+                        <Icon name="Menu" size={24} />
+                    </button>
+                    <h1 className="text-xl font-bold font-serif">Tecnologics Sale</h1>
+                </div>
 
-  const totalCartItems = Object.values(cart).reduce((a, b) => a + b, 0);
-
-  return (
-    <div className="min-h-screen pb-20">
-      <header className="sticky top-0 bg-[#F7F4EF]/90 backdrop-blur z-30 px-6 py-4 flex justify-between items-center border-b border-gray-200/50 max-w-7xl mx-auto">
-        <div className="flex items-center gap-3">
-          <button className="p-1"><Menu size={22} /></button>
-          <h1 className="text-xl font-bold tracking-tight" style={{ fontFamily: 'Faustina, serif' }}>Lo de Tito</h1>
-        </div>
-        <div className="flex items-center gap-4">
-          <button className="relative p-2">
-            <Heart size={22} />
-            {favorites.size > 0 && (
-              <span className="absolute top-1 right-1 w-4 h-4 rounded-full bg-[#B5502C] text-white text-[10px] flex items-center justify-center">
-                {favorites.size}
-              </span>
-            )}
-          </button>
-          <button className="relative p-2">
-            <ShoppingCart size={22} />
-            {totalCartItems > 0 && (
-              <span className="absolute top-1 right-1 w-4 h-4 rounded-full bg-[#1F2A24] text-white text-[10px] flex items-center justify-center">
-                {totalCartItems}
-              </span>
-            )}
-          </button>
-        </div>
-      </header>
-
-      <main className="max-w-7xl mx-auto px-6 py-6">
-        <div className="mb-8">
-          <h2 className="text-2xl sm:text-3xl font-bold tracking-tight mb-1" style={{ fontFamily: 'Faustina, serif' }}>
-            Cosas buenas, cerca de casa.
-          </h2>
-          <p className="text-sm text-[#8B8578]">Una selección chica, pensada de a poco — no un catálogo infinito.</p>
-        </div>
-
-        {SECTIONS.map(section => {
-          const sectionProducts = PRODUCTS.filter(p => p.section === section.id);
-          return (
-            <section key={section.id} className="mb-10">
-              <div className="mb-4">
-                <h3 className="text-lg font-bold text-[#1F2A24]">{section.title}</h3>
-                <p className="text-xs text-[#8B8578]">{section.subtitle}</p>
-              </div>
-              
-
-<ProductCarousel 
-                products={sectionProducts}
-                favorites={favorites}
-                onToggleFavorite={toggleFavorite}
-                addToCart={addToCart}
-                onOpen={setActiveModalProduct}
-              />
-            </section>
-          );
+                <div className="flex items-center gap-4">
+                    <button onClick={() => setActiveTab('favorites')} className="relative p-2">
+                        <Icon name="Heart" size={22} />
+                        {favorites?.size > 0 && (
+                            <span className="absolute top-1 right-1 w-4 h-4 rounded-full bg-[#B5502C] text-white text-xs flex items-center justify-center">
+                                {favorites.size}
+                            </span>
+                        )}
+                    </button>
+                    <button onClick={() => setActiveTab('cart')} className="relative p-2">
+                        <Icon name="ShoppingCart" size={22} />
+                        {totalCartItems > 0 && (
+                            <span className="absolute top-1 right-1 w-4 h-4 rounded-full bg-[#1F2A24] text-white text-xs flex items-center justify-center">
+                                {totalCartItems}
+                            </span>
+                        )}
+                    </button>
+                </div>
+            </header>
+            <main className="p-6">
+                {SECTIONS.map(section => {
+                    const sectionProducts = PRODUCTS.filter(p => p.section === section.id);
+                    return (
+                        <section key={section.id} className="mb-10">
+                            <div className="mb-4">
+                                <h3 className="text-lg font-bold text-[#1F2A24]">{section.title}</h3>
+                                <p className="text-xs text-[#8B8578]">{section.subtitle}</p>
+                            </div>
+                              <ProductCarousel
+                            products={sectionProducts}
+                            favorites={favorites}
+                            onToggleFavorite={toggleFavorite}
+                            addToCart={addToCart}
+                            onOpen={setActiveModalProduct} 
+                            />
+                    </section>
+            );
         })}
-      </main>
-
-      <ProductModal 
-        product={activeModalProduct}
-        isFavorite={activeModalProduct ? favorites.has(activeModalProduct.id) : false}
-        onToggleFavorite={toggleFavorite}
-        addToCart={addToCart}
-        onClose={() => setActiveModalProduct(null)}
-      />
+    </main>
+    <ProductModal
+            product={activeModalProduct}
+            isFavorite={activeModalProduct ? favorites.has(activeModalProduct.id) : false}
+            onToggleFavorite={toggleFavorite}
+            addToCart={addToCart}
+            onClose={() => setActiveModalProduct(null)} />
     </div>
   );
 }
